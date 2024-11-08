@@ -42,14 +42,12 @@ def parse_states(zipcodes, states_file):
     with open(states_file, 'r') as file:
         states = {line.strip() for line in file}
 
-    for entry in zipcodes:
-        state = entry['State']
-        city = entry['City']
-
-        if state in states:
-            if state not in state_cities:
-                state_cities[state] = set()
-            state_cities[state].add(city)
+    # Use dictionary comprehension to build state_cities instead of a for-loop
+    # Dictionary comprehension was assisted by ChatGPT
+    state_cities = {
+        state: {entry['City'] for entry in zipcodes if entry['State'] == state}
+        for state in states
+    }
 
     return state_cities
 
@@ -64,6 +62,9 @@ def common_cities(state_cities, output_file):
   with open(output_file, 'w') as file:
       for city in sorted(common_cities):
           file.write(city + '\n')
+
+def lat_lon():
+    return
 
       
 if __name__ == "__main__": 
