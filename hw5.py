@@ -52,6 +52,19 @@ def parse_states(zipcodes, states_file):
             state_cities[state].add(city)
 
     return state_cities
+
+def common_cities(state_cities, output_file):
+  if not state_cities:
+      return # if there's no states given, return nothing
+
+  # find the common cities between each city set
+  common_cities = set.intersection(*state_cities.values())
+
+  # open and write CommonCityNames.txt with all common cities
+  with open(output_file, 'w') as file:
+      for city in sorted(common_cities):
+          file.write(city + '\n')
+
       
 if __name__ == "__main__": 
     start_time = time.perf_counter()  # Do not remove this line
@@ -65,6 +78,9 @@ if __name__ == "__main__":
 
     # parse all the states in zipcodes
     state_cities = parse_states(zipcodes, 'states.txt')
+
+    # find all common cities and write them to a text file
+    common_cities(state_cities, 'CommonCityNames.txt')
 
 
     '''
