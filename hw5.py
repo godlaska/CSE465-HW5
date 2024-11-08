@@ -21,7 +21,8 @@ import csv
 
     
 
-def parseData():
+def parse_data():
+  """Read zipcodes.txt and return a list of each row stored as a dictionary"""
   zipcodes = [] # store each row as a dictionary
 
   # Open the .txt file and specify tab as the delimiter
@@ -34,6 +35,24 @@ def parseData():
 
   return zipcodes
 
+def parse_states(zipcodes, states_file):
+    """Parse states.txt and create a dictionary of cities by states contained in the txt file"""
+    state_cities = {}
+
+    with open(states_file, 'r') as file:
+        states = {line.strip() for line in file}
+
+    for entry in zipcodes:
+        state = entry['State']
+        city = entry['City']
+
+        if state in states:
+            if state not in state_cities:
+                state_cities[state] = set()
+            state_cities[state].add(city)
+
+    return state_cities
+      
 if __name__ == "__main__": 
     start_time = time.perf_counter()  # Do not remove this line
     '''
@@ -41,10 +60,12 @@ if __name__ == "__main__":
     -----------------------------------------------------------
     '''
     
-    zipcodes = parseData()
+    # parse all the data from zipcodes.txt
+    zipcodes = parse_data()
 
-    for entry in zipcodes:
-      print(entry['City'])  # Access the 'City' field in each dictionary
+    # parse all the states in zipcodes
+    state_cities = parse_states(zipcodes, 'states.txt')
+
 
     '''
     Inside the __main__, do not add any codes after this line.
