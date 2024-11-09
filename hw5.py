@@ -65,25 +65,29 @@ def common_cities(state_cities, output_file):
 
 def parse_zips(zipcodes, zips_file):
   """Parse zips.txt and create a dictionary of zipcodes in states contained in the txt file"""
-  zip_coords = {} # use a set so there's not duplicate lat-lon caused by repeated zipcodes
+  zip_coords = []
 
-  # Read zipcodes from zips.txt
+  # Read the list of zip codes line by line
   with open(zips_file, 'r') as file:
-        zips = {line.strip() for line in file}
+      zips = [line.strip() for line in file]  # sUse a list to keep order
 
-  # Use dictionary comprehension to map each zipcode with its lat lon coords
-  zip_coords = {
-    entry['Zipcode']: f"{entry['Lat']} {entry['Long']}"
-    for entry in zipcodes
-    if entry['Zipcode'] in zips and entry['Zipcode'] not in zip_coords
+  # Create a dictionary for quick lookup from zipcodes data
+  zip_data = {
+      entry['Zipcode']: f"{entry['Lat']} {entry['Long']}"
+      for entry in zipcodes
   }
-  
+
+  # Go through zips in the order of zips.txt and add lat-lon coords if they exist
+  for zip_code in zips:
+      if zip_code in zip_data:
+          zip_coords.append((zip_code, zip_data[zip_code]))
+
   return zip_coords
 
 def lat_lon(zip_coords, output_file):
     """Write zip codes with their latitude and longitude to the output file."""
     with open(output_file, 'w') as file:
-        for zip_code, coords in zip_coords.items():
+        for _, coords in zip_coords:
             file.write(f"{coords}\n")
 
       
