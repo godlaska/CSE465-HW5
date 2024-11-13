@@ -116,8 +116,10 @@ def parse_cities(zipcodes, cities_file):
 def write_city_states(city_states, output_file):
     """Write states containing the city to the output file."""
     with open(output_file, 'w') as file:
-        for states in city_states.items():
-            file.write(f"{states}\n")
+        for city, states in city_states.items():
+            # Join the list of states with a space and write it as a single line for each city
+            states_line = ' '.join(states)
+            file.write(f"{states_line}\n")
 
 
       
@@ -148,35 +150,6 @@ if __name__ == "__main__":
 
     # writes the states containing the city
     write_city_states(city_states, 'CityStates.txt')
-
-
-
-
-
-    print(f"Parsed zipcodes: {zipcodes[:5]}")  # Print the first 5 entries to check
-
-    # Step 2: Parse all states in zipcodes
-    state_cities = parse_states(zipcodes, 'states.txt')
-    print(f"State cities mapping: {dict(list(state_cities.items())[:5])}")  # Sample first 5
-
-    # Step 3: Find all common cities and write them to a text file
-    common_cities(state_cities, 'CommonCityNames.txt')
-
-    # Step 4: Parse latitude and longitude coords
-    zip_coords = parse_zips(zipcodes, 'zips.txt')
-    print(f"Zip coordinates: {zip_coords[:5]}")  # Print the first 5 entries
-
-    # Step 5: Write the lat-lon coords of the zip code to a text file
-    lat_lon(zip_coords, 'LatLon.txt')
-
-    # Step 6: Parse cities from cities.txt and find states with the city in them
-    city_states = parse_cities(zipcodes, 'cities.txt')
-    print(f"City-states dictionary: {dict(list(city_states.items())[:5])}")  # Sample first 5 entries
-
-    # Step 7: Write the states containing the city to CityStates.txt
-    write_city_states(city_states, 'CityStates.txt')
-    print("CityStates.txt has been written.")
-
 
     '''
     Inside the __main__, do not add any codes after this line.
