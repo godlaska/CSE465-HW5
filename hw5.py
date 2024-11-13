@@ -14,9 +14,9 @@ import csv
 
 """
 """
-1- => Lambda was used in line/s: ............
-2- => Filter or map was used in line/s: ...........
-3- => yield was used in line/s: .........
+1- => Lambda was used in line/s: N/A
+2- => Filter or map was used in line/s: N/A
+3- => yield was used in line/s: N/A
 """
 
     
@@ -30,8 +30,7 @@ def parse_data():
       reader = csv.DictReader(file, delimiter='\t')
         
       # Read each row in the txt file
-      for row in reader:
-          zipcodes.append(row)  # Add each row (dictionary) to the list
+      zipcodes = [row for row in reader]  # Add each row (dictionary) to the list
 
   return zipcodes
 
@@ -44,7 +43,7 @@ def parse_states(zipcodes, states_file):
     state_cities = {}
 
     with open(states_file, 'r') as file:
-        states = {line.strip() for line in file}
+        states = {line.strip() for line in file if line.strip()}  # only processes the line if it's non-empty
 
     # Use dictionary comprehension to build state_cities instead of a for-loop
     # Dictionary comprehension was assisted by ChatGPT
@@ -95,8 +94,7 @@ def parse_zips(zipcodes, zips_file):
 def lat_lon(zip_coords, output_file):
     """Write zip codes with their latitude and longitude to the output file."""
     with open(output_file, 'w') as file:
-        for _, coords in zip_coords:
-            file.write(f"{coords}\n")
+        file.writelines([f"{coords}\n" for _, coords in zip_coords])
 
 
 
