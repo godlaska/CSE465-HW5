@@ -69,9 +69,9 @@ def parse_zips(zipcodes, zips_file):
 
   # Read the list of zip codes line by line
   with open(zips_file, 'r') as file:
-      zips = [line.strip() for line in file]  # sUse a list to keep order
+      zips = [line.strip() for line in file]  # Use a list to keep the same order as its read
 
-  # Create a dictionary for quick lookup from zipcodes data
+  # Create a dictionary for efficient lookup from zipcodes data
   zip_data = {
       entry['Zipcode']: f"{entry['Lat']} {entry['Long']}"
       for entry in zipcodes
@@ -90,6 +90,37 @@ def lat_lon(zip_coords, output_file):
         for _, coords in zip_coords:
             file.write(f"{coords}\n")
 
+def parse_cities(zipcodes, cities_file):
+    """Parse cities.txt and create a dictionary of states that contain that city"""
+    with open(cities_file, 'r') as file:
+        cities = [line.strip() for line in file]
+
+    city_states = {}
+
+    # Create a dictionary where cities are the key and the value is the set of states
+    # containing the city
+    for entry in zipcodes:
+        city = entry['City']
+        state = entry['State']
+        if city in cities:
+            if city not in city_states:
+                city_states[city] = set()
+            city_states[city].add(state)
+
+    # Sort the output
+    for city in city_states:
+        city_states[city] = sorted(city_states[city])
+
+    return city_states
+
+def write_city_states(city_states, output_file):
+    """Write states containing the city to the output file."""
+    with open(output_file, 'w') as file:
+        for city, states in city_states.items():
+            # Join the sorted list of states with spaces
+            file.write(f"{states}\n")
+
+
       
 if __name__ == "__main__": 
     start_time = time.perf_counter()  # Do not remove this line
@@ -107,9 +138,17 @@ if __name__ == "__main__":
     # find all common cities and write them to a text file
     common_cities(state_cities, 'CommonCityNames.txt')
 
+    # parse all latitude and longitude coords
     zip_coords = parse_zips(zipcodes, 'zips.txt')
 
+    # write the lat-lon coords of the zip code to a text file
     lat_lon(zip_coords, 'LatLon.txt')
+
+    # parses all cities from cities.txt and find states with the city in them
+    city_states = parse_cities(zipcodes, 'cities.txt')
+
+    # writes the states containing the city
+    write_city_states(city_states, 'CityStates.txt')
 
 
     '''
