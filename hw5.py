@@ -25,7 +25,7 @@ def parse_data():
   """Read zipcodes.txt and return a list of each row stored as a dictionary"""
   zipcodes = [] # store each row as a dictionary
 
-  # Open the .txt file and specify tab as the delimiter
+  # Open zipcodes.txt and use tab as the delimiter
   with open('zipcodes.txt', 'r') as file:
       reader = csv.DictReader(file, delimiter='\t')
         
@@ -39,7 +39,7 @@ def parse_data():
 """ ---------------------------- COMMON CITY NAMES ---------------------------- """
 
 def parse_states(zipcodes, states_file):
-    """Parse states.txt and create a dictionary of cities by states contained in the txt file"""
+    """Parse states.txt and create a dictionary of cities by states contained in the text file"""
     state_cities = {}
 
     with open(states_file, 'r') as file:
@@ -71,20 +71,20 @@ def common_cities(state_cities, output_file):
 """ ---------------------------- LAT LON ---------------------------- """
 
 def parse_zips(zipcodes, zips_file):
-  """Parse zips.txt and create a dictionary of zipcodes in states contained in the txt file"""
+  """Parse zips.txt and create a dictionary of zipcodes found in states specified in the text file"""
   zip_coords = []
 
   # Read the list of zip codes line by line
   with open(zips_file, 'r') as file:
       zips = [line.strip() for line in file]  # Use a list to keep the same order as its read
 
-  # Create a dictionary for efficient lookup from zipcodes data
+  # Create a dictionary where the key is a zipcode and the values are the latitude and longitude
   zip_data = {
       entry['Zipcode']: f"{entry['Lat']} {entry['Long']}"
       for entry in zipcodes
   }
 
-  # Go through zips in the order of zips.txt and add lat-lon coords if they exist
+  # Go through zips in the order of zips.txt and add lat-lon coords (if they exist)
   for zip_code in zips:
       if zip_code in zip_data:
           zip_coords.append((zip_code, zip_data[zip_code]))
@@ -112,6 +112,7 @@ def parse_cities(zipcodes, cities_file):
         city = entry['City']
         state = entry['State']
         if city in cities:
+            # Add a city only once
             if city not in city_states:
                 city_states[city] = set()
             city_states[city].add(state)
