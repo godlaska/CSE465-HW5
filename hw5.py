@@ -20,7 +20,7 @@ import csv
 """
 
     
-
+""" ---------------------------- DATA PARSING ---------------------------- """
 def parse_data():
   """Read zipcodes.txt and return a list of each row stored as a dictionary"""
   zipcodes = [] # store each row as a dictionary
@@ -34,6 +34,10 @@ def parse_data():
           zipcodes.append(row)  # Add each row (dictionary) to the list
 
   return zipcodes
+
+
+
+""" ---------------------------- COMMON CITY NAMES ---------------------------- """
 
 def parse_states(zipcodes, states_file):
     """Parse states.txt and create a dictionary of cities by states contained in the txt file"""
@@ -63,6 +67,10 @@ def common_cities(state_cities, output_file):
       for city in sorted(common_cities):
           file.write(city + '\n')
 
+
+
+""" ---------------------------- LAT LON ---------------------------- """
+
 def parse_zips(zipcodes, zips_file):
   """Parse zips.txt and create a dictionary of zipcodes in states contained in the txt file"""
   zip_coords = []
@@ -90,6 +98,9 @@ def lat_lon(zip_coords, output_file):
         for _, coords in zip_coords:
             file.write(f"{coords}\n")
 
+
+
+""" ---------------------------- CITY STATES ---------------------------- """
 def parse_cities(zipcodes, cities_file):
     """Parse cities.txt and create a dictionary of states that contain that city"""
     with open(cities_file, 'r') as file:
@@ -111,15 +122,17 @@ def parse_cities(zipcodes, cities_file):
     for city in city_states:
         city_states[city] = sorted(city_states[city])
 
-    return city_states
+    return city_states, cities
 
-def write_city_states(city_states, output_file):
+def write_city_states(city_states, output_file, cities):
     """Write states containing the city to the output file."""
     with open(output_file, 'w') as file:
-        for city, states in city_states.items():
-            # Join the list of states with a space and write it as a single line for each city
-            states_line = ' '.join(states)
-            file.write(f"{states_line}\n")
+        for city in cities:
+            if city in city_states:  # Keeps order of output to match cities.txt
+                states_line = ' '.join(city_states[city])  # Join the states on the same line
+                file.write(f"{states_line}\n")
+            else:
+                file.write("\n")  # If no states are found, write a blank line
 
 
       
@@ -130,6 +143,10 @@ if __name__ == "__main__":
     -----------------------------------------------------------
     '''
     
+
+
+
+
     # parse all the data from zipcodes.txt
     zipcodes = parse_data()
 
@@ -146,10 +163,15 @@ if __name__ == "__main__":
     lat_lon(zip_coords, 'LatLon.txt')
 
     # parses all cities from cities.txt and find states with the city in them
-    city_states = parse_cities(zipcodes, 'cities.txt')
+    city_states, cities = parse_cities(zipcodes, 'cities.txt')
 
     # writes the states containing the city
-    write_city_states(city_states, 'CityStates.txt')
+    write_city_states(city_states, 'CityStates.txt', cities)
+
+
+
+
+
 
     '''
     Inside the __main__, do not add any codes after this line.
